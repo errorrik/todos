@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Todo</title>
+        <!--link href="dep/esui/3.1.0/src/css/main.less" rel="stylesheet"-->
+        <link rel="stylesheet" href="src/ui/ui.css">
+        <link rel="stylesheet" href="src/index.css">
+        <link rel="stylesheet" href="dep/font-awesome/font-awesome.css">
+       
+        <script src="dep/esl-2.1.4.js"></script>
+        <script>
+            require.config({
+                baseUrl: 'src',
+                paths: {
+                    moment: '../dep/moment-2.11.0'
+                },
+                packages: [
+                    {
+                        name: 'er',
+                        location: '../dep/er/3.1.0-rc.2/src'
+                    },
+                    {
+                        name: 'esui',
+                        location: '../dep/esui/3.1.0/src'
+                    },
+                    {
+                        name: 'ef',
+                        location: '../dep/ef/3.1.0-beta.3/src'
+                    },
+                    {
+                        name: 'mini-event',
+                        location: '../dep/mini-event/1.0.2/src'
+                    },
+                    {
+                        name: 'eoo',
+                        location: '../dep/eoo/0.1.4/src'
+                    },
+                    {
+                        name: 'etpl',
+                        location: '../dep/etpl/3.1.0/src'
+                    },
+                    {
+                        name: 'underscore',
+                        main: 'underscore',
+                        location: '../dep/underscore/1.8.5/src'
+                    },
+                    {
+                        name: 'jquery',
+                        main: 'jquery',
+                        location: '../dep/jquery/1.11.1/src'
+                    }
+                ]
+            });
+        </script>
+    </head>
+    <body>
+        <div id="wrap"></div>
+        <script>
+            require(
+                ['er', 'er/config', 'er/events', 'er/ajax', 'todo/init', 'category/init'],
+                function (er, config, events, ajax) {
+                    events.on(
+                        'error',
+                        function(error) {
+                            console.log(error);
+                        }
+                    );
+
+                    config.indexURL = '/';
+                    config.mainElement = 'wrap';
+                    ajax.config.cache = true;
+                    er.start();
+                }
+            );
+        </script>
+    </body>
+</html>

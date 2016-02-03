@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * ER (Enterprise RIA)
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @ignore
+ * @file 视图类
+ * @author otakustay
+ */
+define(
+    function (require) {
+        var util = require(&#39;./util&#39;);
+
+<span id='View-method-constructor'><span id='View'>        /**
+</span></span>         * @class View
+         *
+         * 视图类
+         *
+         * 在ER框架中，View不一定要继承该类，
+         * 任何有一个名为`render`的方法的对象均可作为View
+         *
+         * 该类结合`template`对象，实现了一个通用的RIA视图方案
+         *
+         * @extends mini-event.EventTarget
+         * @constructor
+         */
+        var exports = {};
+
+        exports.constructor = function () {
+            this.initialize();
+        };
+
+        exports.initialize = util.noop;
+
+<span id='View-property-template'>        /**
+</span>         * 对应的模板名，指定一个etpl的`target`来作为渲染的内容，
+         * 具体参考[etpl的说明](https://github.com/ecomfe/etpl#target)
+         */
+        exports.template = &#39;&#39;;
+
+<span id='View-method-getTemplateName'>        /**
+</span>         * 获取对应的模板名称，默认直接返回{@link View#template}属性
+         *
+         * @return {string}
+         */
+        exports.getTemplateName = function () {
+            return this.template || &#39;&#39;;
+        };
+
+<span id='View-property-model'>        /**
+</span>         * 对应的{@link Model}对象，通常由{@link Action}设置
+         *
+         * @type {Mixed}
+         * @readonly
+         */
+        exports.model = null;
+
+<span id='View-property-container'>        /**
+</span>         * 渲染容器的元素或其id，通常由{@link Action}设置
+         *
+         * @type {string | HTMLElement}
+         * @readonly
+         */
+        exports.container = &#39;&#39;;
+
+<span id='View-method-getContainerElement'>        /**
+</span>         * 获取渲染容器的元素，默认返回{@link View#container}指定的元素
+         *
+         * @return {HTMLElement}
+         */
+        exports.getContainerElement = function () {
+            return util.getElement(this.container) || null;
+        };
+
+<span id='View-method-getTemplateData'>        /**
+</span>         * 获取用于模板渲染的数据对象
+         *
+         * @return {Object}
+         */
+        exports.getTemplateData = function () {
+            var model = this.model;
+            if (model &amp;&amp; typeof model.get !== &#39;function&#39;) {
+                var Model = require(&#39;./Model&#39;);
+                model = new Model(model);
+            }
+
+            var visit = function (propertyPath) {
+                var path = propertyPath.replace(/\[(\d+)\]/g, &#39;.$1&#39;).split(&#39;.&#39;);
+                var propertyName = path.shift();
+                var value = model.get(propertyName);
+
+                while (value &amp;&amp; (propertyName = path.shift())) {
+                    value = value[propertyName];
+                }
+
+                return value;
+            };
+
+            return { get: visit, relatedModel: model };
+        };
+
+<span id='View-method-render'>        /**
+</span>         * 渲染当前视图
+         *
+         * ER的默认实现是使用[etpl](https://github.com/ecomfe/etpl)渲染容器，
+         * 如果需要使用其它的模板，或自己有视图的管理，建议重写此方法
+         */
+        exports.render = function () {
+            var container = this.getContainerElement();
+            // 容器没有还不一定是没配置好，很可能是主Action销毁了子Action才刚加载完
+            if (!container) {
+                var url = this.model
+                    &amp;&amp; typeof this.model.get === &#39;function&#39;
+                    &amp;&amp; this.model.get(&#39;url&#39;);
+                throw new Error(&#39;Container not found when rendering &#39; + (url ? &#39;&quot;&#39; + url + &#39;&quot;&#39; : &#39;view&#39;));
+            }
+
+            var template = require(&#39;etpl&#39;);
+            var html = template.render(this.getTemplateName(), this.getTemplateData());
+            container.innerHTML = html;
+
+            this.enterDocument();
+        };
+
+
+<span id='View-property-enterDocument'>        /**
+</span>         * 当容器渲染完毕后触发，用于控制元素可见性及绑定事件等DOM操作
+         *
+         * @protected
+         */
+        exports.enterDocument = require(&#39;./util&#39;).noop;
+
+<span id='View-method-dispose'>        /**
+</span>         * 销毁当前视图
+         */
+        exports.dispose = function () {
+            var container = this.getContainerElement();
+            container &amp;&amp; (container.innerHTML = &#39;&#39;);
+        };
+
+        var View = require(&#39;eoo&#39;).create(require(&#39;mini-event/EventTarget&#39;), exports);
+        return View;
+    }
+);
+</pre>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='meta-ActionContext'>/**
+</span> * @class meta.ActionContext
+ *
+ * Action执行上下文类
+ */
+function ActionContext () {
+<span id='meta-ActionContext-property-url'>    /**
+</span>     * @property {URL} url
+     *
+     * 当前的URL
+     */
+    this.url;
+
+<span id='meta-ActionContext-property-referrer'>    /**
+</span>     * @property {URL} referrer
+     *
+     * 来源URL
+     */
+    this.referrer;
+
+<span id='meta-ActionContext-property-isChildAction'>    /**
+</span>     * @property {boolean} isChildAction
+     *
+     * 是否作为子Action加载
+     */
+    this.isChildAction;
+
+<span id='meta-ActionContext-property-title'>    /**
+</span>     * @property {string} title
+     *
+     * 当前Action代表页面的标题
+     */
+    this.title;
+
+<span id='meta-ActionContext-property-container'>    /**
+</span>     * @property {string | HTMLElement} container
+     *
+     * 使用的容器元素的id
+     */
+    this.container;
+
+<span id='meta-ActionContext-property-args'>    /**
+</span>     * @property {Object} args
+     *
+     * 相关参数，包含了：
+     *
+     * - 从URL中获取的参数
+     * - 在{@link meta.ActionConfig#args}中配置的参数
+     * - 通过{@link Controller#renderChildAction}加载时传递的`options`参数
+     */
+    this.args;
+}
+</pre>
+</body>
+</html>

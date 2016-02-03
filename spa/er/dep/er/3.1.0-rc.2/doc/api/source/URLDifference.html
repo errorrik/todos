@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='meta-URLDifference'>/**
+</span> * @class meta.URLDifference
+ *
+ * 表示2个URL的差异的对象
+ */
+function URLDifference() {
+<span id='meta-URLDifference-property-path'>    /**
+</span>     * @property {boolean | meta.Difference} path
+     *
+     * 表达URL的`path`部分的差异，如果没有差异则值为`false`
+     */
+    this.path;
+
+<span id='meta-URLDifference-property-query'>    /**
+</span>     * @property {boolean | Object} query
+     *
+     * 表达URL的`query`部分的差异，如果没有差异则值为`false`。
+     * 如果存在差异，则该属性的键为存在差异的字段名称，
+     * 值为一个{@link meta.Difference}对象
+     */
+    this.query;
+
+<span id='meta-URLDifference-property-queryDifference'>    /**
+</span>     * @property {meta.Difference[]} queryDifference
+     *
+     * 存放URL的`query`部分的所有差异的数组
+     */
+    this.queryDifference;
+}</pre>
+</body>
+</html>

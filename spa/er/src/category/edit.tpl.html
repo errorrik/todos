@@ -1,0 +1,10 @@
+<!-- :category/edit -->
+<ul class="edit-category-list">
+    <!-- for: ${categories} as ${category} -->
+    <li data-id="${category.id}" id="edit-category-${category.id}">
+        <input type="text" data-ui="type:TextBox;id:title${category.id}" value="${category.title}">
+        <ul data-ui="type:ColorPicker;id:color${category.id};datasource:@colors;value:${category.color}"></ul>
+        <i class="fa fa-check" data-cmd="edit"></i><i class="fa fa-trash" data-cmd="rm"></i>
+    </li>
+    <!-- /for -->
+</ul>

@@ -1,0 +1,17 @@
+<!-- :todo/form -->
+<div class="form">
+    <input type="text" class="form-title" placeholder="标题" data-ui="type:TextBox;id:title">
+    <textarea class="form-desc" placeholder="备注" data-ui="type:TextBox;id:desc"></textarea>
+
+    <div id="edit-category-form" title="Edit Category">
+        <ul id="edit-category-list"></ul>
+    </div>
+    <ul data-ui="type:CategoryPicker;id:category"></ul>
+    <i class="fa fa-plus add-category" data-ui="type:Button;id:addCategory"></i>
+    <i class="fa fa-pencil edit-category" data-ui="type:Button;id:editCategory"></i>
+    <div>预期完成时间： <div data-ui="type:Calendar;id:endTimeD"></div><div data-ui="type:Select;id:endTimeT"></div></div>
+    <div class="form-op">
+        <button type="button" data-ui="type:Button;id:ok" class="form-ok"><i class="fa fa-check-circle-o"></i></button>
+        <button type="button" data-ui="type:Button;id:cancel" class="form-cancel"><i class="fa fa-times-circle-o"></i></button>
+    </div>
+</div>

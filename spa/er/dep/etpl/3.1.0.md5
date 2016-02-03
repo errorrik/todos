@@ -1,0 +1,11 @@
+{
+    "LICENSE": "5c597a93416a6b2fd475a4b6a5ae567f",
+    "README.md": "6955bf60fd17a351d6c50f9143c25066",
+    "doc/api.md": "3f730a37c3a97efe68b40981ae095d2b",
+    "doc/config.md": "c4453bcdf10036d725d28e6397d5ed2c",
+    "doc/syntax.md": "d0b9695dca3003173f31cc38b4b5f591",
+    "main.js": "5c131f6789741ceba9117a95552d2918",
+    "package.json": "95962e6a5fccfe093726e36325ffe5d0",
+    "src/main.js": "cb306768a8e9210e67df6a500e39a0b0",
+    "src/tpl.js": "456dd99c71ff258f31ed4a9d173baff5"
+}

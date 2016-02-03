@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * ER (Enterprise RIA)
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @ignore
+ * @file 事件中心
+ * @author otakustay
+ */
+define(
+    function (require) {
+<span id='EventBus-method-constructor'><span id='EventBus'>        /**
+</span></span>         * @class EventBus
+         *
+         * 事件总线类
+         *
+         * 通过`require(&#39;er/events&#39;).EventBus`访问该类构造函数，其中`require(&#39;er/events&#39;)`是该类的全局实例
+         *
+         * @extends mini-event.EventTarget
+         * @constructor
+         */
+        var exports = {};
+
+<span id='EventBus-method-notifyError'>        /**
+</span>         * 通知一个错误的产生
+         *
+         * @param {Mixed} error 错误对象，如果是字符串则会被封装为一个Error对象
+         */
+        exports.notifyError = function (error) {
+            if (typeof error === &#39;string&#39;) {
+                error = new Error(error);
+            }
+
+            this.fire(&#39;error&#39;, { error: error });
+
+            return error;
+        };
+
+        var EventBus = require(&#39;eoo&#39;).create(require(&#39;mini-event/EventTarget&#39;), exports);
+        var instance = new EventBus();
+        instance.EventBus = EventBus;
+        return instance;
+
+<span id='EventBus-event-error'>        /**
+</span>         * @event error
+         * @member EventBus
+         *
+         * 接收到错误时触发
+         *
+         * @param {Mixed} error 抛出的错误对象
+         */
+
+<span id='EventBus-event-forwardaction'>        /**
+</span>         * @event forwardaction
+         * @member EventBus
+         *
+         * 在重定向前往一个Action时，但执行任何Action查找、进入等逻辑前触发
+         *
+         * @param {URL} url 当前访问的URL
+         * @param {string} container 指定渲染Action的容器元素的id
+         * @param {boolean} isChildAction 是否为子Action
+         * @param {URL} [referrer] 来源URL
+         */
+
+<span id='EventBus-event-actionmoved'>        /**
+</span>         * @event actionmoved
+         * @member EventBus
+         *
+         * 发现一个Action通过{@link meta.ActionConfig#movedTo}配置为移动后触发
+         *
+         * @param {URL} url 当前访问的URL
+         * @param {meta.ActionConfig} config 查找到的Action配置对象
+         * @param {string} movedTo 移动的目标地址
+         */
+
+<span id='EventBus-event-actionnotfound'>        /**
+</span>         * @event actionnotfound
+         * @member EventBus
+         *
+         * 发现一个Action通过{@link meta.ActionConfig#movedTo}配置为移动后触发
+         *
+         * 事件对象提供{@link meta.ActionContext}中的各属性
+         *
+         * @param {string} failType 失败类型，始终为`&quot;NotFound&quot;`
+         * @param {string} reason 失败原因，始终为`&quot;Not Found&quot;`
+         */
+
+<span id='EventBus-event-permissiondenied'>        /**
+</span>         * @event permissiondenied
+         * @member EventBus
+         *
+         * 发现访问一个没有权限的Action时触发
+         *
+         * 事件对象提供{@link meta.ActionContext}中的各属性
+         *
+         * @param {string} failType 失败类型，始终为`&quot;PermissionDenied&quot;`
+         * @param {string} reason 失败原因，始终为`&quot;Permission denied&quot;`
+         */
+
+<span id='EventBus-event-actionabort'>        /**
+</span>         * @event actionabort
+         * @member EventBus
+         *
+         * 发现访问一个没有权限的Action时触发
+         *
+         * 事件对象提供{@link meta.ActionContext}中的各属性
+         */
+
+<span id='EventBus-event-actionfail'>        /**
+</span>         * @event actionfail
+         * @member EventBus
+         *
+         * 发现访问一个没有权限的Action时触发
+         *
+         * 事件对象提供{@link meta.ActionContext}中的各属性
+         *
+         * @param {string} failType 失败类型，可能有2个值：
+         *
+         * - `&quot;NoModule&quot;`：表示根据{@link meta.ActionConfig#type}加载不到对应的模块
+         * - `&quot;InvalidFactory&quot;`：表示加载得到一个Action工厂但是无法用其生产Action实例
+         *
+         * @param {string} reason 失败原因
+         * @param {meta.ActionConfig} config 当前Action的配置项
+         * @param {Object} action 当`failType`为`&quot;InvalidFactory&quot;`时存在，值为当前加载的被认为是Action工厂的对象
+         */
+
+<span id='EventBus-event-actionloaded'>        /**
+</span>         * @event actionloaded
+         * @member EventBus
+         *
+         * 当Action模块加载完毕后触发
+         *
+         * @param {URL} url 当前访问的地址
+         * @param {meta.ActionConfig} config 当前的Action配置项
+         * @param {Function} action 当前的Action构造函数
+         */
+
+<span id='EventBus-event-leaveaction'>        /**
+</span>         * @event leaveaction
+         * @member EventBus
+         *
+         * 当离开一个Action时触发，触发后调用{@link Action#method-leave}方法
+         *
+         * @param {Action} action 当前的Action对象
+         * @param {meta.ActionContext} to 离开后前往的下一个Action的上下文
+         */
+
+<span id='EventBus-event-enteraction'>        /**
+</span>         * @event enteraction
+         * @member EventBus
+         *
+         * 在进入一个Action时触发，触发后调用{@link Action#method-enter}方法
+         *
+         * 事件对象提供{@link meta.ActionContext}中的各属性
+         *
+         * @param {Action} action 当前的Action对象
+         */
+
+<span id='EventBus-event-enteractioncomplete'>        /**
+</span>         * @event enteractioncomplete
+         * @member EventBus
+         *
+         * 在一个Action完成进入，即{@link Action#method-enter}的生命周期完成之后触发
+         *
+         * 事件对象提供{@link meta.ActionContext}中的各属性
+         *
+         * @param {Action} action 当前的Action对象
+         */
+
+<span id='EventBus-event-enteractionfail'>        /**
+</span>         * @event enteractionfail
+         * @member EventBus
+         *
+         * 在进入一个Action的过程中出现错误时触发
+         *
+         * 事件对象提供{@link meta.ActionContext}中的各属性
+         *
+         * @param {string} failType 失败类型，始终为`&quot;EnterFail&quot;`
+         * @param {string} reasone 失败原因
+         */
+    }
+);
+</pre>
+</body>
+</html>
