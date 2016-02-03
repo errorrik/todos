@@ -10,8 +10,8 @@ define(function (require) {
     FormAction.prototype.viewType = require('./FormView');
 
     FormAction.prototype.initBehavior = function () {
-        this.view.on('submit', submitData.bind(this));
-        this.view.on('categoryChange', updateCategory.bind(this));
+        this.view.on('submit', submitData, this);
+        this.view.on('categoryChange', updateCategory, this);
     };
 
     function submitData(todo) {
@@ -21,11 +21,7 @@ define(function (require) {
     }
 
     function updateCategory() {
-        this.model.refreshCategories().then(updateCategoryDone.bind(this));
-    }
-
-    function updateCategoryDone() {
-        this.view.updateCategory(this.model.get('categories'));
+        this.model.refreshCategories().then(this.view.updateCategory.bind(this.view));
     }
 
     return FormAction;
