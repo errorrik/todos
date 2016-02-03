@@ -11,9 +11,9 @@
 
 <!-- if: ${category} --><a href="#/" class="fa fa-close filter-category-clear"></a><!-- /if -->
 
-<ul class="todo-list" id="todo-list">
+<ul class="todo-list" id="todo-list" data-ui="type:Panel;id:todo-list" data-ui-extension-command-type="Command">
 <!-- for: ${list} as ${item} -->
-<li data-todo-id="${item.id}"<!-- if: ${item.done} --> class="todo-done"<!-- /if --><!-- if: ${item.category} --> style="border-color:${item.category.color}"<!-- /if -->>
+<li data-ui="type:Panel;id:todo-item-${item.id}"<!-- if: ${item.done} --> data-ui-states="done"<!-- /if --><!-- if: ${item.category} --> style="border-color:${item.category.color}"<!-- /if -->>
     <h3>${item.title}</h3>
     <p>${item.desc}</p>
     <div class="todo-meta">
@@ -21,8 +21,8 @@
         <span>预期完成时间: ${item.endTimeText}</span>
     </div>
     <a class="fa fa-pencil" href="#/edit~id=${item.id}"></a>
-    <i class="fa fa-check" data-cmd="done" data-cmd-args="${item.id}"></i>
-    <i class="fa fa-trash-o" data-cmd="rm" data-cmd-args="${item.id}"></i>
+    <i class="fa fa-check" data-command="done" data-command-args="${item.id}"></i>
+    <i class="fa fa-trash-o" data-command="rm" data-command-args="${item.id}"></i>
 </li>
 <!-- /for -->
 </ul>

@@ -170,14 +170,14 @@ li {
     color: #999;
 }
 
-.todo-list .todo-done .fa {
+.todo-list .state-done .fa {
     display: block;
 }
-.todo-list .todo-done:hover .fa {
+.todo-list .state-done:hover .fa {
     color: #60a917;
 }
 
-.todo-list .todo-done {
+.todo-list .state-done {
     cursor: default;
     opacity: .4;
 }
@@ -242,7 +242,7 @@ li {
 .form-desc {
     clear: both;
     display: block;
-    
+
     border: 0;
     outline: 0;
     background: none;
