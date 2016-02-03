@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Todo</title>
+        <link rel="stylesheet" href="src/index.css">
+        <link rel="stylesheet" href="dep/font-awesome/font-awesome.css">
+        <link rel="stylesheet" href="dep/jquery-ui.css">
+        <link rel="stylesheet" href="dep/jquery.timepicker.css">
+        <script src="dep/jquery-2.1.4.js"></script>
+        <script src="dep/jquery-ui-1.11.1.min.js"></script>
+        <script src="dep/jquery.timepicker.js"></script>
+        <script src="dep/jquery.datepair.js"></script>
+        <script src="dep/esl-2.1.2.js"></script>
+
+        <script type="text/javascript">
+            require.config({
+                baseUrl: 'src',
+                paths: {
+                    moment: '../dep/moment-2.11.0'
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div id="wrap"></div>
+        <script type="text/javascript">
+            require(['main']);
+        </script>
+    </body>
+</html>
