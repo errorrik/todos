@@ -7,12 +7,11 @@ module.exports = exports = function (item) {
     return provider.getData()
         .then(
             data => {
-                let list = data.list;
-                let last = list[0];
+                let categories = data.category;
+                let last = categories[0];
                 let id = last ? last.id + 1 : 1;
                 item.id = id;
-                item.addTime = (new Date()).getTime();
-                list.unshift(item);
+                categories.unshift(item);
 
                 return provider.setData(data);
             }
