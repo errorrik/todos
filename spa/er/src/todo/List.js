@@ -10,8 +10,8 @@ define(function (require) {
     TodoAction.prototype.viewType = require('./ListView');
 
     TodoAction.prototype.initBehavior = function () {
-        this.view.on('rm', rmTodo.bind(this));
-        this.view.on('done', doneTodo.bind(this));
+        this.view.on('rm', rmTodo, this);
+        this.view.on('done', doneTodo, this);
     };
 
     function rmTodo(e) {

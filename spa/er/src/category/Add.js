@@ -10,12 +10,11 @@ define(function (require) {
     AddAction.prototype.viewType = require('./AddView');
 
     AddAction.prototype.initBehavior = function () {
-        this.view.on('submit', submitData.bind(this));
-        this.view.on('cancel', cancel.bind(this));
+        this.view.on('submit', submitData, this);
+        this.view.on('cancel', cancel, this);
     };
 
     function submitData(category) {
-        console.log(category)
         this.model.sendData(category).then(dataSended.bind(this));
     }
 

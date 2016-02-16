@@ -1,7 +1,5 @@
 define(function (require) {
     var UIModel = require('ef/UIModel');
-    var datasource = require('er/datasource');
-    var common = require('../common');
     var service = require('../service');
 
     var DATE_TIMES = [
@@ -35,22 +33,25 @@ define(function (require) {
         UIModel.apply(this, arguments);
 
         this.datasource = {
-            todo: function (model) {
-                var id = model.get('id');
-                if (id) {
-                    return service.todo(id);
-                }
+            todo: {
+                dump: true,
+                retrieve: function (model) {
+                    var id = model.get('id');
+                    if (id) {
+                        return service.todo(id);
+                    }
 
-                var endTime = new Date();
-                endTime.setDate(endTime.getDate() + 1);
-                endTime.setSeconds(0);
-                endTime.setMinutes(0);
-                return Promise.resolve({
-                    endTime: endTime.getTime()
-                });
+                    var endTime = new Date();
+                    endTime.setDate(endTime.getDate() + 1);
+                    endTime.setSeconds(0);
+                    endTime.setMinutes(0);
+                    return Promise.resolve({
+                        endTime: endTime.getTime()
+                    });
+                }
             },
 
-            categories: function (model) {
+            categories: function () {
                 return service.categories();
             }
         };
@@ -59,7 +60,6 @@ define(function (require) {
 
     FormModel.prototype.prepare = function () {
         this.set('dateTimes', DATE_TIMES);
-        this.fill(this.get('todo'), {silent: true});
 
         var endTime = new Date(this.get('endTime'));
         this.set('endTime', endTime);
@@ -77,11 +77,7 @@ define(function (require) {
     };
 
     FormModel.prototype.refreshCategories = function () {
-        var me = this;
-        return service.categories().then(function (categories) {
-            me.set('categories', categories);
-            return categories;
-        });
+        return service.categories().then(this.set.bind(this, 'categories'));
     };
 
     return FormModel;

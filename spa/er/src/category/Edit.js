@@ -10,8 +10,8 @@ define(function (require) {
     EditAction.prototype.viewType = require('./EditView');
 
     EditAction.prototype.initBehavior = function () {
-        this.view.on('edit', edit.bind(this));
-        this.view.on('rm', rm.bind(this));
+        this.view.on('edit', edit, this);
+        this.view.on('rm', rm, this);
     };
 
     function edit(e) {

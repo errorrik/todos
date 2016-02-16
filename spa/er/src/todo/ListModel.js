@@ -1,8 +1,6 @@
 define(function (require) {
     var Model = require('er/Model');
-    var datasource = require('er/datasource');
     var moment = require('moment');
-    var common = require('../common');
     var service = require('../service');
 
     function TodoModel() {
