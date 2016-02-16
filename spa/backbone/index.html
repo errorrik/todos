@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Todo</title>
+        <link rel="stylesheet" href="src/ui/ui.css">
+        <link rel="stylesheet" href="src/index.css">
+        <link rel="stylesheet" href="dep/font-awesome/font-awesome.css">
+
+        <script src="dep/esl-2.1.4.js"></script>
+        <script>
+            require.config({
+                baseUrl: 'src',
+                paths: {
+                    'Backbone': '../dep/backbone-1.2.3',
+                    'jquery': '../dep/jquery-2.1.4',
+                    'underscore': '../dep/underscore-1.8.5',
+                    'moment': '../dep/moment-2.11.0'
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div id="wrap"></div>
+
+        <script type="text/template" id="view-todo-item">
+        <h3><%= title %></h3>
+        <p><%= desc %></p>
+        <div class="todo-meta">
+            <% if (category) { %><span><%= category.title %></span> | <% } %>
+            <span>预期完成时间: <%= endTimeText %></span>
+        </div>
+        <a class="fa fa-pencil" href="#/edit/<%= id %>"></a>
+        <i class="fa fa-check"></i>
+        <i class="fa fa-trash-o"></i>
+        </script>
+
+        <script type="text/template" id="view-todo-list">
+        <a href="#/add" class="todo-add"><i class="fa fa-plus-square"></i></a>
+        <ul class="filter-category">
+            <% _.each(categories, function (item) { %>
+            <li style="background:<%= item.color %>" data-id="<%= item.id %>"<% if (category == item.id) { %> class="selected"<% } %>><a href="#/todos/category/<%= item.id %>"><%= item.title %></a></li>
+        <% }); %>
+        </ul>
+        <% if (category) { %><a href="#/" class="fa fa-close filter-category-clear"></a><% } %>
+        <ul class="todo-list"></ul>
+        </script>
+
+        <script type="text/template" id="view-ui-categorypicker">
+        <% _.each(datasource, function (item) { %>
+            <li style="background:<%= item.color %>" data-id="<%= item.id %>" class="ui-categorypicker-item<% if (value == item.id) { %> selected<% } %>"><%= item.title %></li>
+        <% }); %>
+        </script>
+
+        <script type="text/template" id="view-ui-colorpicker">
+        <% _.each(datasource, function (item) { %><li style="background:<%= item %>" data-value="<%= item %>" class="ui-colorpicker-item<% if (value === item) { %> selected<% } %>"></li><% }); %>
+        </script>
+
+        <script type="text/template" id="view-todo-form">
+        <div class="form">
+            <input type="text" class="form-title" placeholder="标题" value=<%= title %>>
+            <textarea class="form-desc" placeholder="备注"><%= desc %></textarea>
+
+            <div id="edit-category-form" title="Edit Category">
+                <ul id="edit-category-list"></ul>
+            </div>
+            <ul class="form-category-picker"></ul>
+            <i class="fa fa-plus add-category"></i>
+            <i class="fa fa-pencil edit-category"></i>
+            <div>预期完成时间： <input type="text" class="form-endtime-date"><input type="text" class="form-endtime-time"></div>
+            <div class="form-op">
+                <button type="button" class="form-ok"><i class="fa fa-check-circle-o"></i></button>
+                <button type="button" class="form-cancel"><i class="fa fa-times-circle-o"></i></button>
+            </div>
+        </div>
+        </script>
+
+        <script id="view-ui-timepicker" type="text/template">
+        <ul class="ui-timepicker-list">
+        <% _.each(datasource, function (item) { %>
+            <li data-value="<%= item.value %>" class="ui-timepicker-item<% if (value == item.value) { %> selected<% } %>" data-command="select"><%= item.text %></li>
+        <% }); %>
+        </ul>
+        </script>
+
+        <script id="view-ui-calendar" type="text/template">
+        <div class="layer-title">
+            <i class="fa fa-angle-left" data-command="prev-month"></i>
+            <b><%= viewYear %>-<%= viewMonth + 1 %></b>
+            <i class="fa fa-angle-right" data-command="next-month"></i>
+        </div>
+        <table>
+        <tr>
+        <% _.each(dayTexts, function (item) { %>
+            <td><%= item %></td>
+        <% }); %>
+        <% _.each(monthDays, function (item, index) { %>
+            <% if (index % 7 === 0) { %></tr><tr><% } %>
+            <% if (item) { %>
+                <td data-command="select" data-date="<%= item %>" data-month="<%= viewMonth %>" data-year="<%= viewYear %>"<% if (value.getDate() == item && value.getMonth() == viewMonth && value.getFullYear() == viewYear) { %> class="selected"<% } %>><%= item %></td>
+            <% } else { %>
+                <td> </td>
+            <% } %>
+        <% }); %>
+        </tr>
+        </table>
+        </script>
+
+        <script type="text/template" id="view-category-add">
+        <input type="text" placeholder="分类" class="category-title">
+        <ul class="form-color"></ul>
+        <div class="form-op">
+            <button type="button" class="form-ok"><i class="fa fa-check-circle-o"></i></button>
+            <button type="button" class="form-cancel"><i class="fa fa-times-circle-o"></i></button>
+        </div>
+        </script>
+
+        <script type="text/template" id="view-category-edit">
+        <ul class="edit-category-list"></ul>
+        </script>
+
+        <script type="text/template" id="view-category-edit-item">
+        <input type="text" value="<%= title %>" class="category-title">
+        <ul class="category-color" data-id="<%= id %>"></ul>
+        <i class="fa fa-check" data-cmd="edit"></i><i class="fa fa-trash" data-cmd="rm"></i>
+        </script>
+
+        <script>
+        require(
+            ['router', 'todo/List', 'todo/Add', 'todo/Edit'], 
+            function (router, todoList, addTodo, editTodo) {
+                router.setMainElement('#wrap');
+                router.add(todoList);
+                router.add(addTodo);
+                router.add(editTodo);
+                router.start();
+            });
+        </script>
+    </body>
+</html>
