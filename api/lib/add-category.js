@@ -11,6 +11,7 @@ module.exports = exports = function (item) {
                 let last = categories[0];
                 let id = last ? last.id + 1 : 1;
                 item.id = id;
+                item.done = item.done || false;
                 categories.unshift(item);
 
                 return provider.setData(data);
