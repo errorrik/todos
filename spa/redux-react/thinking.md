@@ -1,0 +1,4 @@
+- [ ] 组件的prop、state和自身成员。prop.defaultValue prop.value state.value
+- [ ] 两次渲染的问题
+- [ ] 组件结构关系管理不公开
+- [ ] 数据的转换是action处理还是reducer处理？看起来应该是reducer，但是请求数据是action里做的，action请求数据前可能要对数据进行回转，那就尴尬了？
