@@ -1,4 +1,7 @@
 - [ ] 组件的prop、state和自身成员。prop.defaultValue prop.value state.value
+- [ ] 上面一条产生的应用场景：一个需要同步应用state又需要可输入的input就很难做，需要挂接componentWillReceiveProps
 - [ ] 两次渲染的问题
 - [ ] 组件结构关系管理不公开
 - [ ] 数据的转换是action处理还是reducer处理？看起来应该是reducer，但是请求数据是action里做的，action请求数据前可能要对数据进行回转，那就尴尬了？
+- [ ] 扁结构和单一store对数据项命名提出更高要求
+- [ ] 基本ioc是很难的
