@@ -12,6 +12,7 @@ module.exports = exports = function (item) {
                 let id = last ? last.id + 1 : 1;
                 item.id = id;
                 item.addTime = (new Date()).getTime();
+                item.done = false;
                 list.unshift(item);
 
                 return provider.setData(data);
