@@ -7,3 +7,5 @@ Thumbs.db
 .DS_Store
 *.swp
 *.gz
+spa/angular2/src/**/*.js
+spa/angular2/src/**/*.js.map
