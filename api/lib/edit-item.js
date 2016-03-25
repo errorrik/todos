@@ -10,6 +10,7 @@ module.exports = exports = function (item) {
                 data.list = data.list.map(todo => {
                     if (todo.id === item.id) {
                         item.addTime = todo.addTime;
+                        item.done = todo.done;
                         return item;
                     }
 
