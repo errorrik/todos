@@ -1,0 +1,28 @@
+<a href="#/add" class="todo-add"><i class="fa fa-plus-square"></i></a>
+
+<ul class="filter-category">
+    <li *ngFor="#item of categories"
+        [class.checked]="item.id == category"
+        [style.background]="item.color"
+    >
+        <a [routerLink]="['CategoryTodos', {category: item.id}]">{{ item.title }}</a>
+    </li>
+</ul>
+<a [routerLink]="['Todos']" class="fa fa-close filter-category-clear" *ngIf="category"></a>
+
+<ul class="todo-list">
+    <li *ngFor="#item of todos; #i = index"
+        [class.todo-done]="item.done"
+        [style.borderColor]="item.category.color"
+    >
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.desc }}</p>
+        <div class="todo-meta">
+            <span *ngIf="item.category">{{ item.category.title }} | </span>
+            <span>预期完成时间: {{ item.endTime | formatDate: 'YYYY-MM-DD, h:mm a' }}</span>
+        </div>
+        <a class="fa fa-pencil" [routerLink]="['EditTodo', {id: item.id}]"></a>
+        <i class="fa fa-check" (click)="doneTodo(i)"></i>
+        <i class="fa fa-trash-o" (click)="rmTodo(i)"></i>
+    </li>
+</ul>

@@ -1,0 +1,30 @@
+{
+    "name": "todos-ng2",
+    "version": "0.0.1",
+
+    "scripts": {
+        "start": "concurrently \"npm run tsc:w\" \"npm run lite\" ",
+        "tsc": "tsc",
+        "tsc:w": "tsc -w",
+        "lite": "lite-server",
+        "typings": "typings",
+        "postinstall": "typings install"
+    },
+
+    "devDependencies": {
+        "typescript": "^1.8.9",
+        "typings": "0.7.9",
+        "lite-server": "^2.1.0",
+        "concurrently": "^2.0.0"
+    },
+
+    "dependencies": {
+        "angular2": "2.0.0-beta.9",
+        "systemjs": "0.19.24",
+        "es6-promise": "^3.0.2",
+        "es6-shim": "^0.33.3",
+        "font-awesome": "^4.5.0",
+        "jquery": "^2.2.1",
+        "moment": "^2.11.2"
+    }
+}

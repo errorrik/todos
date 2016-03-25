@@ -1,0 +1,15 @@
+<div class="form">
+    <input type="text" class="form-title" placeholder="标题" [(ngModel)]="todo.title">
+    <textarea class="form-desc" placeholder="备注" [(ngModel)]="todo.desc"></textarea>
+    <CategoryPicker [datasource]="categories" [(ngModel)]="todo.categoryId"></CategoryPicker>
+    <i class="fa fa-plus add-category" (click)="addCategoryClicker()"></i>
+    <i class="fa fa-pencil edit-category" (click)="editCategoryClicker()"></i>
+    <div>预期完成时间：
+        <Calendar [(ngModel)]="todo.endTimeDate"></Calendar>
+        <TimePicker  [(ngModel)]="todo.endTimeHour"></TimePicker>
+    </div>
+    <div class="form-op">
+        <button type="button" class="form-ok" (click)="submit()"><i class="fa fa-check-circle-o"></i></button>
+        <button type="button" class="form-cancel" (click)="cancel()"><i class="fa fa-times-circle-o"></i></button>
+    </div>
+</div>
