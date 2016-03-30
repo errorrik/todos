@@ -45,8 +45,6 @@ const store = createStore(
 );
 
 
-// <IndexRoute component={Page404} />
-
 render(
     <Provider store={store}>
         <ReduxRouter>
