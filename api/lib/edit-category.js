@@ -17,5 +17,9 @@ module.exports = exports = function (item) {
 
                 return provider.setData(data);
             }
+        ).then(
+            () => {
+                return item;
+            }
         );
 };

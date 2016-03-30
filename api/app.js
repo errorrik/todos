@@ -68,8 +68,8 @@ app.post('/add', (request, response) => {
     let categoryId = parseInt(request.body.categoryId, 10);
 
     require('./lib/add-item')({title, desc, endTime, categoryId})
-        .then(() => {
-            response.end('true');
+        .then(newTodo => {
+            response.json(newTodo);
         })
         .catch(err => {
             console.log(err);
@@ -84,8 +84,8 @@ app.post('/edit', (request, response) => {
     let categoryId = parseInt(request.body.categoryId, 10);
 
     require('./lib/edit-item')({id, title, desc, endTime, categoryId})
-        .then(() => {
-            response.end('true');
+        .then(edited => {
+            response.json(edited);
         })
         .catch(err => {
             console.log(err);
@@ -97,7 +97,7 @@ app.post('/rm', (request, response) => {
 
     require('./lib/rm-item')(id)
         .then(() => {
-            response.end('true');
+            response.json(id);
         })
         .catch(err => {
             console.log(err);
@@ -109,7 +109,7 @@ app.post('/done', (request, response) => {
 
     require('./lib/done-item')(id)
         .then(() => {
-            response.end('true');
+            response.json(id);
         })
         .catch(err => {
             console.log(err);
@@ -121,8 +121,8 @@ app.post('/add-category', (request, response) => {
     let color = request.body.color;
 
     require('./lib/add-category')({title, color})
-        .then(() => {
-            response.end('true');
+        .then(newCategory => {
+            response.json(newCategory);
         })
         .catch(err => {
             console.log(err);
@@ -135,8 +135,8 @@ app.post('/edit-category', (request, response) => {
     let title = request.body.title;
 
     require('./lib/edit-category')({id, title, color})
-        .then(() => {
-            response.end('true');
+        .then(editedCategory => {
+            response.json(editedCategory);
         })
         .catch(err => {
             console.log(err);
@@ -148,7 +148,7 @@ app.post('/rm-category', (request, response) => {
 
     require('./lib/rm-category')(id)
         .then(() => {
-            response.end('true');
+            response.json(id);
         })
         .catch(err => {
             console.log(err);
