@@ -1,0 +1,201 @@
+<dom-module id="ui-timepicker-layer">
+    <style>
+    :host {
+        position: absolute;
+        font-size: 12px;
+        border: 1px solid #ddd;
+        width: 70px;
+        background: #fff;
+        color: #666;
+    }
+
+    :host ::content li {
+        text-align: center;
+        cursor: pointer;
+    }
+
+    :host ::content li:hover {
+        background: #eee;
+    }
+
+    :host ::content li.selected {
+        background: #eee;
+    }
+    </style>
+
+    <template>
+        <ul>
+            <template is="dom-repeat" items="{{datasource}}">
+                <li on-click="itemClick" class$="{{selectedClass(item, value)}}">{{ item.text }}</li>
+            </template>
+        </ul>
+    </template>
+
+    <script>
+    (function () {
+    'use strict';
+
+    Polymer({
+        is: 'ui-timepicker-layer',
+
+        properties: {
+            value: {
+                type: Number,
+                notify: true
+            }
+        },
+
+        itemClick: function (e) {
+            this.value = e.model.get('item').value;
+            this.hide();
+        },
+
+        selectedClass: function (item, value) {
+            return item.value == value ? 'selected' : '';
+        },
+
+        pos: function (pos) {
+            pos.left && (this.style.left = pos.left + 'px');
+            pos.top && (this.style.top = pos.top + 'px');
+        },
+
+        hide: function () {
+            this.pos({left: -1000});
+        }
+    });
+    })();
+    </script>
+</dom-module>
+
+
+<dom-module id="ui-timepicker">
+    <style>
+    :host {
+        width: 70px;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    :host:hover {
+        background: #444;
+    }
+    </style>
+
+    <template>
+        <div on-click="mainClick" class="ui-timepicker">{{valueText(value)}}</div>
+    </template>
+
+    <script>
+    (function () {
+    'use strict';
+
+    Polymer({
+        is: 'ui-timepicker',
+
+        properties: {
+            value: {
+                type: Number,
+                notify: true
+            },
+
+            datasource: {
+                type: Array,
+                value: [
+                    {text: '12:00am', value: 0},
+                    {text: '1:00am', value: 1},
+                    {text: '2:00am', value: 2},
+                    {text: '3:00am', value: 3},
+                    {text: '4:00am', value: 4},
+                    {text: '5:00am', value: 5},
+                    {text: '6:00am', value: 6},
+                    {text: '7:00am', value: 7},
+                    {text: '8:00am', value: 8},
+                    {text: '9:00am', value: 9},
+                    {text: '10:00am', value: 10},
+                    {text: '11:00am', value: 11},
+                    {text: '12:00pm', value: 12},
+                    {text: '1:00pm', value: 13},
+                    {text: '2:00pm', value: 14},
+                    {text: '3:00pm', value: 15},
+                    {text: '4:00pm', value: 16},
+                    {text: '5:00pm', value: 17},
+                    {text: '6:00pm', value: 18},
+                    {text: '7:00pm', value: 19},
+                    {text: '8:00pm', value: 20},
+                    {text: '9:00pm', value: 21},
+                    {text: '10:00pm', value: 22},
+                    {text: '11:00pm', value: 23}
+                ]
+            }
+        },
+
+        ready: function () {
+            this.docClick = this.docClick.bind(this);
+        },
+
+        attached: function () {
+            $(document).on('click', this.docClick);
+        },
+
+        detached: function () {
+            $(document).off('click', this.docClick);
+            this.layer = null;
+        },
+
+        mainClick: function (e) {
+            this.initLayer();
+            this.showLayer();
+        },
+
+        valueText: function (value) {
+            for (var i = 0; i < this.datasource.length; i++) {
+                var item = this.datasource[i];
+                if (item.value == value) {
+                    return item.text;
+                }
+            }
+
+            return '';
+        },
+
+        initLayer: function () {
+            if (!this.layer) {
+                this.layer = document.createElement('ui-timepicker-layer');
+                this.layer.datasource = this.datasource;
+                this.layer.value = this.value;
+                document.body.appendChild(this.layer);
+                this.listen(this.layer, 'value-changed', 'layerValueChanged');
+            }
+        },
+
+        showLayer: function () {
+            var pos = $(this).offset();
+            this.layer.pos({
+                left: pos.left, 
+                top: pos.top + this.offsetHeight + 1
+            });
+        },
+
+        hideLayer: function () {
+            this.layer && this.layer.hide();
+        },
+
+        layerValueChanged: function (e) {
+            this.value = e.detail.value;
+        },
+
+        docClick: function (e) {
+            var target = $(e.target);
+            var closestLayer = target.closest(this.layer);
+            var closestMain = target.closest(this);
+
+            if (closestLayer.length === 0 && closestMain.length === 0) {
+                this.hideLayer();
+            }
+        }
+    });
+
+    })();
+    </script>
+</dom-module>

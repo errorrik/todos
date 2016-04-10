@@ -1,0 +1,50 @@
+<script src="../dep/jquery-2.1.4.js"></script>
+<script src="../dep/moment-2.11.0.js"></script>
+<script src="./service.js"></script>
+
+<link rel="stylesheet" href="../dep/font-awesome/font-awesome.css">
+<link rel="stylesheet" href="./index.css">
+<link rel="import" href="../dep/polymer/polymer.html">
+
+<link rel="import" href="./route.html">
+<link rel="import" href="./todo/list-page.html">
+<link rel="import" href="./todo/form-page.html">
+<link rel="import" href="./category/add-page.html">
+<link rel="import" href="./category/edit-page.html">
+
+
+
+<dom-module id="app-main">
+<style>
+:host {
+    width: 800px;
+    margin: 0 auto;
+    display: block;
+}
+</style>
+
+<template>
+    <app-route path="/" component="page-todos"></app-route>
+    <app-route path="/todos/category/:category" component="page-todos"></app-route>
+    <app-route path="/add" component="page-todo-form"></app-route>
+    <app-route path="/edit/:id" component="page-todo-form"></app-route>
+    <app-route path="/category/add" component="page-category-add"></app-route>
+    <app-route path="/category/edit" component="page-category-edit"></app-route>
+</template>
+
+<script>
+(function () {
+'use strict';
+
+Polymer({
+    is: 'app-main',
+
+    attached: function () {
+        locator.start();
+    }
+});
+
+})();
+</script>
+
+</dom-module>

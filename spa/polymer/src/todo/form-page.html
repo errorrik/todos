@@ -1,0 +1,305 @@
+<link rel="import" href="../component/CategoryPicker.html">
+<link rel="import" href="../component/TimePicker.html">
+<link rel="import" href="../component/Calendar.html">
+
+<link rel="import" href="../category/add-page.html">
+<link rel="import" href="../category/edit-page.html">
+
+
+<dom-module id="page-todo-form">
+
+<style>
+:host ::content .add-category {
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+:host ::content .edit-category {
+    cursor: pointer;
+}
+</style>
+
+<template>
+<div class="form">
+    <input type="text" class="form-title" placeholder="标题" value="{{todoTitle::change}}">
+    <textarea class="form-desc" placeholder="备注" value="{{todoDesc::change}}"></textarea>
+
+    <div id="edit-category-form" title="Edit Category">
+        <ul id="edit-category-list"></ul>
+    </div>
+    <ui-categorypicker datasource="{{categories}}" value="{{todoCategoryId}}"></ui-categorypicker>
+    <i class="fa fa-plus add-category" on-click="addCategory"></i>
+    <i class="fa fa-pencil edit-category" on-click="editCategory"></i>
+    <div>预期完成时间： <ui-calendar value="{{todoEndTimeDate}}"></ui-calendar><ui-timepicker value="{{todoEndTimeHour}}"></ui-timepicker></div>
+    <div class="form-op">
+        <button type="button" class="form-ok" on-click="submit"><i class="fa fa-check-circle-o"></i></button>
+        <button type="button" class="form-cancel" on-click="cancel"><i class="fa fa-times-circle-o"></i></button>
+    </div>
+</div>
+</template>
+
+<script>
+(function () {
+'use strict';
+
+Polymer({
+    is: 'page-todo-form',
+
+    update: function () {
+        var id = this.params.id;
+        var todoPromise = service.newTodo();
+        if (id) {
+            todoPromise = service.todo(id);
+        }
+
+        todoPromise.then(todo => {
+            this.initTodo(todo);
+        });
+
+        service.categories().then(categories => {
+            this.categories = categories;
+        });
+    },
+
+    initTodo: function (todo) {
+        this.todo = todo;
+        this.todoTitle = todo.title;
+        this.todoDesc = todo.desc;
+        this.todoEndTime = todo.endTime;
+        this.todoCategoryId = todo.categoryId;
+
+        var endTime = new Date(todo.endTime);
+        this.todoEndTimeHour = endTime.getHours();
+        endTime.setHours(0);
+        endTime.setMinutes(0);
+        endTime.setSeconds(0);
+        this.todoEndTimeDate = endTime;
+    },
+
+    submit: function () {
+        var endTime = new Date(this.todoEndTimeDate.getTime());
+        endTime.setHours(this.todoEndTimeHour);
+
+        var todo = Object.assign(this.todo, {
+            title: this.todoTitle,
+            desc: this.todoDesc,
+            endTime: endTime.getTime(),
+            categoryId: this.todoCategoryId
+        });
+
+        var submitPromise = todo.id
+            ? service.edit(todo)
+            : service.add(todo);
+
+        submitPromise.then(() => {this.finish();});
+    },
+
+    cancel: function () {
+        this.finish();
+    },
+
+    finish: function () {
+        history.back();
+    },
+
+    addCategory: function () {
+        if (!this.addCategoryDialog) {
+            this.addCategoryDialog = document.createElement('add-category-dialog');
+            document.body.appendChild(this.addCategoryDialog);
+            this.listen(this.addCategoryDialog, 'add', 'categoryAdded');
+        }
+
+        this.addCategoryDialog.show({
+            left: window.screen.availWidth / 2 - 100,
+            top: 100
+        });
+    },
+
+    categoryAdded: function (e) {
+        this.push('categories', e.detail);
+        this.addCategoryDialog.hide();
+    },
+
+    editCategory: function () {
+        if (!this.editCategoryDialog) {
+            this.editCategoryDialog = document.createElement('edit-category-dialog');
+            document.body.appendChild(this.editCategoryDialog);
+            this.listen(this.editCategoryDialog, 'rm', 'categoryRmed');
+            this.listen(this.editCategoryDialog, 'edit', 'categoryEdited');
+        }
+
+        this.editCategoryDialog.show({
+            left: window.screen.availWidth / 2 - 100,
+            top: 100
+        });
+    },
+
+    categoryEdited: function (e) {
+        var len = this.categories.length;
+        var category = e.detail;
+
+        while (len--) {
+            if (this.categories[len].id === category.id) {
+                this.splice('categories', len, 1, category);
+                return;
+            }
+        }
+    },
+
+    categoryRmed: function (e) {
+        var len = this.categories.length;
+        while (len--) {
+            if (this.categories[len].id === e.detail) {
+                this.splice('categories', len, 1);
+                return;
+            }
+        }
+    },
+
+    detached: function () {
+
+    }
+});
+})();
+</script>
+</dom-module>
+
+<dom-module id="add-category-dialog">
+
+<style>
+:host {
+    position: absolute;
+    background: #fff;
+    color: #666;
+    top: 100px;
+}
+
+:host ::content .form {
+    background: #fff;
+}
+
+:host ::content .form-title,
+:host ::content .form-title:hover,
+:host ::content .form-title:focus {
+    background: #eee;
+    border: 1px solid #ddd;
+    color: #333;
+}
+</style>
+
+<template>
+<page-category-add id="main"></page-category-add>
+</template>
+
+<script>
+(function () {
+'use strict';
+
+Polymer({
+    is: 'add-category-dialog',
+
+    attached: function () {
+        this.listen(this.$.main, 'done', 'addDone');
+        this.listen(this.$.main, 'cancel', 'addCancel');
+    },
+
+    detached: function () {
+        this.unlisten(this.$.main, 'done', 'addDone');
+        this.unlisten(this.$.main, 'cancel', 'addCancel');
+    },
+
+    addDone: function (e) {
+        e.returnValue = false;
+        this.fire('add', e.detail);
+    },
+
+    addCancel: function (e) {
+        e.returnValue = false;
+        this.hide();
+    },
+
+    hide: function () {
+        this.style.left = '-1000px';
+    },
+
+    show: function (pos) {
+        pos.left && (this.style.left = pos.left + 'px');
+        pos.top && (this.style.top = pos.top + 'px');
+    }
+});
+})();
+</script>
+
+</dom-module>
+
+<dom-module id="edit-category-dialog">
+
+<style>
+:host {
+    position: absolute;
+    background: #fff;
+    color: #666;
+    top: 100px;
+    width: 200px;
+}
+
+:host ::content .fa-times-circle-o {
+    color: red;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+}
+
+</style>
+
+<template>
+<i class="fa fa-times-circle-o" on-click="finish"></i>
+<page-category-edit id="main"></page-category-edit>
+</template>
+
+<script>
+(function () {
+'use strict';
+
+Polymer({
+    is: 'edit-category-dialog',
+
+    ready() {
+        this.$.main.update();
+    },
+
+    attached: function () {
+        this.listen(this.$.main, 'edit', 'editDone');
+        this.listen(this.$.main, 'rm', 'rmDone');
+    },
+
+    detached: function () {
+        this.unlisten(this.$.main, 'done', 'addDone');
+        this.unlisten(this.$.main, 'cancel', 'addCancel');
+    },
+
+    finish: function () {
+        this.hide();
+    },
+
+    editDone: function (e) {
+        this.fire('edit', e.detail);
+    },
+
+    rmDone: function (e) {
+        this.fire('rm', e.detail);
+    },
+
+    hide: function () {
+        this.style.left = '-1000px';
+    },
+
+    show: function (pos) {
+        pos.left && (this.style.left = pos.left + 'px');
+        pos.top && (this.style.top = pos.top + 'px');
+    }
+});
+})();
+</script>
+
+</dom-module>

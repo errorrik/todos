@@ -1,0 +1,56 @@
+<dom-module id="ui-colorpicker">
+
+<style>
+:host {
+    list-style: none;
+    display: inline-block;
+}
+
+:host ::content li {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+:host ::content .selected {
+    box-shadow: 0 0 0 2px #ddd inset;
+}
+</style>
+
+<template>
+<ul class="ui-colorpicker">
+    <template is="dom-repeat" items="{{datasource}}">
+        <li style="background:{{item}}" class$="{{selectedClass(item, value)}}" on-click="itemClick"></li>
+    </template>
+</ul>
+</template>
+
+<script>
+(function () {
+'use strict';
+
+Polymer({
+    is: 'ui-colorpicker',
+
+    properties: {
+        value: {
+            type: String,
+            notify: true
+        },
+
+        datasource: Array
+    },
+
+    selectedClass: function (item, value) {
+        return item == value ? 'selected' : '';
+    },
+
+    itemClick: function (e) {
+        var value = e.model.get('item');
+        this.value = value;
+    }
+});
+})();
+</script>
+</dom-module>

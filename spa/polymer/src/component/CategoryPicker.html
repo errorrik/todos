@@ -1,0 +1,62 @@
+<dom-module id="ui-categorypicker">
+
+<style>
+:host, :host ::content ul {
+    display: inline-block;
+}
+
+:host ::content li {
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    padding: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+}
+
+:host ::content li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+:host ::content .selected {
+    box-shadow: 0 0 0 2px #ddd inset;
+}
+</style>
+
+<template>
+
+<ul>
+    <template is="dom-repeat" items="{{datasource}}">
+        <li style="background:{{item.color}}" class$="{{selectedClass(item, value)}}" on-click="itemClick">{{ item.title }}</li>
+    </template>
+</ul>
+
+</template>
+
+<script>
+(function () {
+'use strict';
+
+Polymer({
+    is: 'ui-categorypicker',
+
+    properties: {
+        value: {
+            type: Number,
+            notify: true
+        }
+    },
+
+    selectedClass: function (category, value) {
+        return category.id == value ? 'selected' : '';
+    },
+
+    itemClick: function (e) {
+        var value = e.model.get('item').id;
+        this.value = value;
+    }
+});
+})();
+</script>
+</dom-module>

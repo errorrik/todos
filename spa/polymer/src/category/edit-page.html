@@ -1,0 +1,93 @@
+<link rel="import" href="../component/ColorPicker.html">
+<script src="../config.js"></script>
+
+
+<dom-module id="page-category-edit">
+
+<style>
+:host ::content input {
+    display: block;
+}
+
+:host ::content ui-colorpicker {
+    display: block;
+    margin-top: 3px;
+}
+
+:host ::content > ul > li {
+    margin: 10px;
+}
+
+:host ::content .fa-check {
+    cursor: pointer;
+    color: green;
+}
+
+:host ::content .fa-trash {
+    cursor: pointer;
+    color: red;
+}
+
+:host ::content .form-title,
+:host ::content .form-title:hover,
+:host ::content .form-title:focus {
+    background: #eee;
+    border: 1px solid #ddd;
+    color: #333;
+}
+</style>
+
+<template>
+<ul class="edit-category-list">
+    <template is="dom-repeat" items="{{categories}}">
+        <li>
+            <input type="text" value="{{item.title::change}}" class="form-title">
+            <ui-colorpicker datasource="{{colors}}" value="{{item.color}}"></ui-colorpicker>
+            <i class="fa fa-check" on-click="edit"></i>
+            <i class="fa fa-trash" on-click="rm"></i>
+        </li>
+    </template>
+</ul>
+</template>
+
+<script>
+(function () {
+'use strict';
+
+Polymer({
+    is: 'page-category-edit',
+
+    properties: {
+        colors: {
+            type: Array,
+            value: config.color
+        }
+    },
+
+    update: function () {
+        service.categories().then(categories => {
+            this.categories = categories;
+        });
+    },
+
+    edit: function (e) {
+        var category = e.model.get('item');
+
+        if (category.title) {
+            service.editCategory(category);
+            this.fire('edit', category);
+        }
+    },
+
+    rm: function (e) {
+        var id = e.model.get('item.id');
+        var index = e.model.get('index');
+
+        service.rmCategory(id);
+        this.splice('categories', index, 1);
+        this.fire('rm', id);
+    }
+});
+})();
+</script>
+</dom-module>

@@ -1,0 +1,277 @@
+<dom-module id="ui-calendar-layer">
+    <style>
+    :host {
+        position: absolute;
+        font-size: 12px;
+        border: 1px solid #ddd;
+        width: 210px;
+        background: #fff;
+        color: #333;
+    }
+
+    :host ::content .ui-calendar-func {
+        line-height: 30px;
+        height: 30px;
+        background: #eee;
+        color: #666;
+    }
+
+    :host ::content ol {
+        margin: 0;
+        padding: 0;
+    }
+
+    :host ::content b {
+        text-align: center;
+        width: 149px;
+        float: left;
+    }
+
+    :host ::content .fa-angle-left,
+    :host ::content .fa-angle-right {
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        float: left;
+    }
+
+    :host ::content .fa-angle-right {
+        float: right;
+    }
+
+    :host ::content {
+        overflow: hidden;
+    }
+
+    :host ::content li {
+        float: left;
+        width: 30px;
+        height: 20px;
+        line-height: 20px;
+        cursor: pointer;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    :host ::content .date-head li {
+        background: #ddd;
+        cursor: default;
+    }
+
+    :host ::content li.selected {
+        background: #eee;
+        cursor: default;
+    }
+    </style>
+
+    <template>
+        <div class="ui-calendar-func">
+            <i class="fa fa-angle-left" on-click="prevMonth"></i>
+            <b>{{ viewYear }}-{{ viewMonthText(viewMonth) }}</b>
+            <i class="fa fa-angle-right" on-click="nextMonth"></i>
+        </div>
+        <ol class="date-head">
+            <li>一</li>
+            <li>二</li>
+            <li>三</li>
+            <li>四</li>
+            <li>五</li>
+            <li>六</li>
+            <li>日</li>
+        </ol>
+        <ol>
+            <template is="dom-repeat" items="{{dates}}">
+                <li on-click="dateClick" class$="{{dateClass(value, viewYear, viewMonth, item)}}">{{item}}</li>
+            </template>
+        </ol>
+    </template>
+
+    <script>
+    (function () {
+    'use strict';
+
+    Polymer({
+        is: 'ui-calendar-layer',
+
+        properties: {
+            value: {
+                type: Number,
+                notify: true
+            }
+        },
+
+        dateClick: function (e) {
+            var date = e.model.get('item');
+            if (!date) {
+                return;
+            }
+
+            this.value = new Date(this.viewYear, this.viewMonth, date);
+            this.hide();
+        },
+
+        dateClass: function (value, year, month, date) {
+            console.log(year, month, date, value.getFullYear() == year 
+                    && value.getMonth() == month 
+                    && value.getDate() == date)
+            return value.getFullYear() == year 
+                    && value.getMonth() == month 
+                    && value.getDate() == date 
+                ? 'selected' 
+                : '';
+        },
+
+        viewMonthText: function (month) {
+            return month + 1 + '';
+        },
+
+        prevMonth: function () {
+            this.viewMonth--;
+            this.updateViewState();
+        },
+
+        nextMonth: function () {
+            this.viewMonth++;
+            this.updateViewState();
+        },
+
+        pos: function (pos) {
+            pos.left && (this.style.left = pos.left + 'px');
+            pos.top && (this.style.top = pos.top + 'px');
+        },
+
+        show: function (pos) {
+            this.pos(pos);
+            this.viewYear = this.value.getFullYear();
+            this.viewMonth = this.value.getMonth();
+            this.updateViewState();
+        },
+
+        hide: function () {
+            this.pos({left: -1000});
+        },
+
+        updateViewState: function () {
+            var viewDate = new Date(this.viewYear, this.viewMonth, 1);
+            this.viewYear = viewDate.getFullYear();
+            this.viewMonth = viewDate.getMonth();
+
+            var dates = [];
+            var day = viewDate.getDay() - 1;
+            for (; day % 7; day--) {
+                dates.push('');
+            }
+            var nextMonth = new Date(this.viewYear, this.viewMonth + 1, 1);
+            var days = (nextMonth - viewDate) / 24 / 60 / 60 / 1000;
+            for (var i = 1; i <= days; i++) {
+                dates.push(i);
+            }
+
+            this.dates = dates;
+        }
+    });
+    })();
+    </script>
+</dom-module>
+
+
+<dom-module id="ui-calendar">
+
+    <style>
+    :host {
+        width: 100px;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    :host:hover {
+        background: #444;
+    }
+    </style>
+
+    <template>
+        <div on-click="mainClick" class="ui-calendar">{{valueText(value)}}</div>
+    </template>
+
+    <script>
+    (function () {
+    'use strict';
+
+    Polymer({
+        is: 'ui-calendar',
+
+        properties: {
+            value: {
+                type: Number,
+                notify: true
+            }
+        },
+
+        ready: function () {
+            this.docClick = this.docClick.bind(this);
+        },
+
+        attached: function () {
+            $(document).on('click', this.docClick);
+        },
+
+        detached: function () {
+            $(document).off('click', this.docClick);
+            this.layer = null;
+        },
+
+        mainClick: function (e) {
+            this.initLayer();
+            this.showLayer();
+        },
+
+        valueText: function (value) {
+            if (value instanceof Date) {
+                return moment(value).format('YYYY-MM-DD');
+            }
+
+            return '';
+        },
+
+        initLayer: function () {
+            if (!this.layer) {
+                this.layer = document.createElement('ui-calendar-layer');
+                this.layer.value = this.value;
+                document.body.appendChild(this.layer);
+                this.listen(this.layer, 'value-changed', 'layerValueChanged');
+            }
+        },
+
+        showLayer: function () {
+            var pos = $(this).offset();
+            this.layer.show({
+                left: pos.left, 
+                top: pos.top + this.offsetHeight + 1
+            });
+        },
+
+        hideLayer: function () {
+            this.layer && this.layer.hide();
+        },
+
+        layerValueChanged: function (e) {
+            this.value = e.detail.value;
+        },
+
+        docClick: function (e) {
+            var target = $(e.target);
+            var closestLayer = target.closest(this.layer);
+            var closestMain = target.closest(this);
+
+            if (closestLayer.length === 0 && closestMain.length === 0) {
+                this.hideLayer();
+            }
+        }
+    });
+
+    })();
+    </script>
+</dom-module>
