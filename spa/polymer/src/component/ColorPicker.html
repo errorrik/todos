@@ -20,9 +20,7 @@
 
 <template>
 <ul class="ui-colorpicker">
-    <template is="dom-repeat" items="{{datasource}}">
-        <li style="background:{{item}}" class$="{{selectedClass(item, value)}}" on-click="itemClick"></li>
-    </template>
+    <template is="dom-repeat" items="{{datasource}}"><li style="background:{{item}}" class$="{{selectedClass(item, value)}}" on-click="itemClick"></li></template>
 </ul>
 </template>
 
