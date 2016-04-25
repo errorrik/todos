@@ -1,5 +1,5 @@
-import React, {Component, PropTypes} from 'react'
-import moment from 'moment'
+import React, {Component} from 'react'
+import Todo from './Todo';
 
 export default class TodoList extends Component {
     constructor(props) {
@@ -8,36 +8,42 @@ export default class TodoList extends Component {
         this.rmClicker = this.rmClicker.bind(this);
     }
 
+    componentWillUpdate() {
+        if (this.perf === 1) {
+            this.startTime = new Date().getTime();
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.perf === 1) {
+            this.perf = 0;
+            console.log(new Date() - this.startTime);
+        }
+    }
+
     render() {
         return (
             <ul className="todo-list">
-            {this.props.todos.map(todo => 
-                <li className={todo.done ? 'todo-done' : ''}
-                    style={{borderColor: todo.category ? todo.category.color : ''}}
-                >
-                    <h3>{todo.title}</h3>
-                    <p>{todo.desc}</p>
-                    <div className="todo-meta">
-                        {todo.category ? `${todo.category.title} | ` : ''}预期完成时间: {moment(todo.endTime).format('YYYY-MM-DD, h:mm a')}
-                    </div>
-                    <a className="fa fa-pencil" href={`#/edit/${todo.id}`}></a>
-                    <i className="fa fa-check" onClick={this.doneClicker} data-id={todo.id}></i>
-                    <i className="fa fa-trash-o" onClick={this.rmClicker} data-id={todo.id}></i>
-                </li>
-            )}
+            {this.props.todos.map(todo => {
+                return <Todo
+                    todo={todo}
+                    key={todo.id}
+                    onDone={this.doneClicker}
+                    onDelete={this.rmClicker} />;
+            })}
             </ul>
         );
     }
 
     doneClicker(e) {
+        this.perf = 1;
         let id = +e.target.getAttribute('data-id');
         this.props.doneMethod(id);
     }
 
     rmClicker(e) {
+        this.perf = 1;
         let id = +e.target.getAttribute('data-id');
         this.props.rmMethod(id);
     }
 }
-
-
